@@ -13,8 +13,8 @@ series:
   - focal
 
 peers:
-  slurmd-inventory:
-    interface: slurmd-inventory
+  slurmd-peer:
+    interface: slurmd-peer
 
 resources:
   slurm:
