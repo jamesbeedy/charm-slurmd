@@ -1,0 +1,24 @@
+name: slurmd
+summary: The compute node daemon for Slurm.
+maintainers:
+  - OmniVector Solutions <admin@omnivector.solutions>
+description: |
+  The compute node daemon for Slurm.
+
+tags:
+  - slurm
+  - hpc
+
+series:
+  - focal
+
+peers:
+  slurmd-inventory:
+    interface: slurmd-inventory
+
+resources:
+  slurm:
+    type: file
+    filename: slurm.tar.gz
+    description: slurm build
+

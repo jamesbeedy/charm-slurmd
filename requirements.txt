@@ -1,0 +1,4 @@
+ops
+git+https://github.com/omnivector-solutions/slurm-install-manager.git@master
+git+https://github.com/omnivector-solutions/interface-slurmd-inventory.git@master
+
