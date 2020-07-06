@@ -77,7 +77,7 @@ class SlurmdCharm(CharmBase):
 
     def _on_slurmd_inventory_available(self, event):
         """Write slurm.conf when a peer joins the relation."""
-
+        pass
 
 
     def _on_start(self, event):
