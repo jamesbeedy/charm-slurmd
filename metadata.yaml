@@ -12,6 +12,9 @@ tags:
 series:
   - focal
 
+requires:
+  slurmctld:
+    interface: slurmctld
 peers:
   slurmd-peer:
     interface: slurmd-peer
