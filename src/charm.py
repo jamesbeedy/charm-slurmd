@@ -12,7 +12,7 @@ from ops.framework import (
 
 from ops.main import main
 
-from slurm_ops_manager import SlurmInstallManager
+from slurm_ops_manager import SlurmOpsManager
 
 from slurmctld import SlurmctldRequirer
 
@@ -36,7 +36,7 @@ class SlurmdCharm(CharmBase):
         self.slurmctld = SlurmctldRequirer(self, "slurmctld")
         self.slurmd_provider = SlurmdProvider(self, "slurmd")
         #instances
-        self.slurm_manager = SlurmInstallManager(self, "slurmd")
+        self.slurm_manager = SlurmOpsManager(self, "slurmd")
 
         self.framework.observe(
             self.on.install,
