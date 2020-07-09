@@ -12,12 +12,11 @@ from ops.framework import (
 
 from ops.main import main
 
-from slurmd_peer import SlurmdPeer
-
-from slurm_install_manager import SlurmInstallManager
+from slurm_ops_manager import SlurmInstallManager
 
 from slurmctld import SlurmctldRequirer
 
+from interface_slurmd import SlurmdProvider
 
 logger = logging.getLogger()
 
@@ -30,28 +29,23 @@ class SlurmdCharm(CharmBase):
         super().__init__(*args)
 
         self._state.set_default(controller_config=None)
+        self._state.set_default(slurm_installed=False)
         self._state.set_default(controller_available=False)
 
+        #interfaces
         self.slurmctld = SlurmctldRequirer(self, "slurmctld")
-        self.slurmd_peer = SlurmdPeer(self, "slurmd-peer")
-
-        self.slurm_install_manager = SlurmInstallManager(
-            self,
-            'slurmd',
-        )
+        self.slurmd_provider = SlurmdProvider(self, "slurmd")
+        #instances
+        self.slurm_manager = SlurmInstallManager(self, "slurmd")
 
         self.framework.observe(
             self.on.install,
             self._on_install
         )
+
         self.framework.observe(
             self.on.start,
             self._on_start
-        )
-
-        self.framework.observe(
-            self.slurmd_peer.on.slurmd_inventory_available,
-            self._on_slurmd_inventory_available
         )
 
         self.framework.observe(
@@ -60,7 +54,8 @@ class SlurmdCharm(CharmBase):
         )
 
     def _on_install(self, event):
-        self.slurm_install_manager.prepare_system_for_slurm()
+        self.slurm_manager.prepare_system_for_slurm()
+        self._state.slurm_installed = True
 
     def _on_controller_available(self, event):
         logger.debug("_______slurmd inventory available and writing______")
@@ -68,16 +63,12 @@ class SlurmdCharm(CharmBase):
         logger.debug(self.slurmctld.get_controller_config())
 
         ctxt = {
-            'nodes': self.slurmd_peer.get_slurmd_inventory(),
+            # 'nodes': self.slurmd_provider,
             'controller_config': self.slurmctld.get_controller_config(),
         }
 
-        self.slurm_install_manager.write_config(ctxt)
-        self.slurm_install_manager.slurm_systemctl("restart")
-
-    def _on_slurmd_inventory_available(self, event):
-        """Write slurm.conf when a peer joins the relation."""
-        pass
+        self.slurm_manager.write_config(ctxt)
+        self.slurm_manager._slurm_systemctl("start")
 
 
     def _on_start(self, event):
